@@ -15,7 +15,7 @@ task_context 'Task' do
     property 'model_definitions', '/std/vector<usv_camera_simulation/ModelDefinition>'
 
     input_port 'vessel_information', 'ais_base/VesselInformation'
-    input_port 'vessel_poses', 'ais_base/Pose'
+    input_port 'vessel_poses', 'ais_base/Position'
 
     port_driven
 end
