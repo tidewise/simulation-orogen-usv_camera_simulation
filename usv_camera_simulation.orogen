@@ -12,7 +12,7 @@ task_context 'Task' do
     # Definition of the models that should be used for the vessels
     #
     # Selection is done based on length
-    property 'model_definitions', '/std/vector<ModelDefinition>'
+    property 'model_definitions', '/std/vector<usv_camera_simulation/ModelDefinition>'
 
     input_port 'vessel_information', 'ais_base/VesselInformation'
     input_port 'vessel_poses', 'ais_base/Pose'
