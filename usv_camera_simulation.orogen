@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+name 'usv_camera_simulation'
+
+using_task_library 'underwater_camera_simulation'
+import_types_from 'ais_base'
+import_types_from 'usv_camera_simulationTypes.hpp'
+
+task_context 'Task' do
+    needs_configuration
+
+    # Definition of the models that should be used for the vessels
+    #
+    # Selection is done based on length
+    property 'model_definitions', '/std/vector<ModelDefinition>'
+
+    input_port 'vessel_information', 'ais_base/VesselInformation'
+    input_port 'vessel_poses', 'ais_base/Pose'
+
+    port_driven
+end
