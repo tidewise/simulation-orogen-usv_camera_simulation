@@ -4,10 +4,10 @@
 #define USV_CAMERA_SIMULATION_TASK_TASK_HPP
 
 #include "usv_camera_simulation/TaskBase.hpp"
+#include <gps_base/UTMConverter.hpp>
 
 namespace usv_camera_simulation {
     /*! \class Task
-     * \brief this task has no documentation, write one as a commentblock before the task_context statement in the orogen file
      */
     class Task : public TaskBase
     {
@@ -16,6 +16,26 @@ namespace usv_camera_simulation {
          * It is located in the .orogen/tasks folder
          */
         friend class TaskBase;
+
+        struct Info {
+            ais_base::Position ais_position;
+            ais_base::VesselInformation ais_info;
+            std::string frame_id;
+        };
+        std::map<uint32_t, Info> mInfo;
+
+        struct Definition : ModelDefinition {
+            sdf::ElementPtr parsed_sdf;
+
+            explicit Definition(ModelDefinition const& d)
+                : ModelDefinition(d) { }
+        };
+        std::vector<Definition> mDefinitions;
+
+        gps_base::UTMConverter mUTM;
+        void addVesselInformation(ais_base::VesselInformation const& info);
+        void updateVesselPosition(ais_base::Position const& position);
+        std::string createVessel(Info const& info);
 
     protected:
 
@@ -52,20 +72,7 @@ namespace usv_camera_simulation {
          */
         bool startHook();
 
-        /**
-         * Hook called on trigger in the Running state
-         *
-         * When this hook is exactly called depends on the chosen task's activity.
-         * For instance, if the task context is declared as periodic in the orogen
-         * specification, the task will be called at a fixed period.
-         *
-         * See Rock's documentation for a list of available triggering mechanisms
-         *
-         * The error(), exception() and fatal() calls, when called in this hook,
-         * allow to get into the associated RunTimeError, Exception and
-         * FatalError states.
-         */
-        void updateHook();
+        void updateUI();
 
         /**
          * Hook called in the RuntimeError state, under the same conditions than

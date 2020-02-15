@@ -3,11 +3,15 @@
 name 'usv_camera_simulation'
 
 using_task_library 'underwater_camera_simulation'
+import_types_from 'gps_base'
 import_types_from 'ais_base'
 import_types_from 'usv_camera_simulationTypes.hpp'
 
-task_context 'Task' do
+task_context 'Task', subclasses: 'underwater_camera_simulation::Task' do
     needs_configuration
+
+    # Parameters used to convert lat/lon coordinates into the visualization space
+    property 'utm_parameters', '/gps_base/UTMConversionParameters'
 
     # Definition of the models that should be used for the vessels
     #
@@ -15,7 +19,7 @@ task_context 'Task' do
     property 'model_definitions', '/std/vector<usv_camera_simulation/ModelDefinition>'
 
     input_port 'vessel_information', 'ais_base/VesselInformation'
-    input_port 'vessel_poses', 'ais_base/Position'
+    input_port 'vessel_position', 'ais_base/Position'
 
     port_driven
 end
