@@ -80,7 +80,21 @@ void Task::addVesselInformation(ais_base::VesselInformation const& vessel_info) 
 void Task::updateVesselPosition(ais_base::Position const& position) {
     int mmsi = position.mmsi;
     auto& info = mInfo[mmsi];
+
+    // For our purposes ... if the angle is unknown, use the course. If there's no
+    // course, just ignore
+    auto yaw = position.yaw;
+    if (base::isUnknown(yaw)) {
+        yaw = position.course_over_ground;
+        if (base::isUnknown(yaw)) {
+            std::cout << "ignoring position for " << mmsi
+                      << " as it has no heading or course information" << std::endl;
+            return;
+        }
+    }
     info.ais_position = position;
+    info.ais_position.yaw = yaw;
+
     if (info.ais_info.time.isNull()) {
         std::cout << "received position for " << mmsi
                   << " but no vessel information received yet" << std::endl;
