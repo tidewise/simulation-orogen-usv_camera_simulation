@@ -13,6 +13,12 @@ namespace usv_camera_simulation {
         std::string sdf;
         /** SDF version used */
         std::string sdf_version = "1.6";
+
+        ModelDefinition()
+            : min_size(0)
+            , max_size(500)
+            , sdf_version("1.6") {
+        }
     };
 }
 
