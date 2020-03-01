@@ -18,8 +18,10 @@ task_context 'Task', subclasses: 'underwater_camera_simulation::Task' do
     # Selection is done based on length
     property 'model_definitions', '/std/vector<usv_camera_simulation/ModelDefinition>'
 
-    input_port 'vessel_information', 'ais_base/VesselInformation'
-    input_port 'vessel_position', 'ais_base/Position'
+    input_port('vessel_information', 'ais_base/VesselInformation')
+        .needs_reliable_connection
+    input_port('vessel_position', 'ais_base/Position')
+        .needs_reliable_connection
 
     port_driven
 end
