@@ -5,12 +5,20 @@
 
 namespace usv_camera_simulation {
     struct ModelDefinition {
-        /** Minimum size for this SDF model */
+        /** Minimum size for which this SDF model may be selected */
         float min_size = 0;
-        /** Maximum size for this SDF model */
+        /** Maximum size for which this SDF model may be selected */
         float max_size = 500;
-        /** Path to the 3D model */
-        std::string model;
+        /** SDF description of the model */
+        std::string sdf;
+        /** SDF version used */
+        std::string sdf_version = "1.6";
+
+        ModelDefinition()
+            : min_size(0)
+            , max_size(500)
+            , sdf_version("1.6") {
+        }
     };
 }
 
