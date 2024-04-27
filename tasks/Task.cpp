@@ -21,7 +21,7 @@ Task::~Task()
 
 bool Task::configureHook()
 {
-    if (! TaskBase::configureHook()) {
+    if (!TaskBase::configureHook()) {
         return false;
     }
     mUTM.reset(new gps_base::UTMConverter(_utm_parameters.get()));
@@ -42,7 +42,7 @@ bool Task::configureHook()
 }
 bool Task::startHook()
 {
-    if (! TaskBase::startHook()) {
+    if (!TaskBase::startHook()) {
         return false;
     }
     return true;
@@ -62,7 +62,8 @@ void Task::updateUI()
     TaskBase::updateUI();
 }
 
-void Task::addVesselInformation(ais_base::VesselInformation const& vessel_info) {
+void Task::addVesselInformation(ais_base::VesselInformation const& vessel_info)
+{
     int mmsi = vessel_info.mmsi;
     auto& info = mInfo[mmsi];
     info.ais_info = vessel_info;
@@ -76,7 +77,8 @@ void Task::addVesselInformation(ais_base::VesselInformation const& vessel_info) 
     updateVesselPosition(info.ais_position);
 }
 
-void Task::updateVesselPosition(ais_base::Position const& position) {
+void Task::updateVesselPosition(ais_base::Position const& position)
+{
     int mmsi = position.mmsi;
     auto& info = mInfo[mmsi];
 
@@ -120,17 +122,17 @@ void Task::updateVesselPosition(ais_base::Position const& position) {
               << "P: " << p.x() << " " << p.y() << " " << p.z() << "\n"
               << "E: " << e.x() << " " << e.y() << " " << e.z() << "\n"
               << "Y: " << info.ais_position.yaw.getRad() << std::endl;
+    std::cout << "ping" << endl;
 
-    vizkit3dWorlds[0]->applyTransformation(
-        "world", info.frame_id,
+    vizkit3dWorlds[0]->applyTransformation("world",
+        info.frame_id,
         nwu.position,
         Eigen::Quaterniond(
-            Eigen::AngleAxisd(info.ais_position.yaw.getRad(), Eigen::Vector3d::UnitZ())
-        )
-    );
+            Eigen::AngleAxisd(info.ais_position.yaw.getRad(), Eigen::Vector3d::UnitZ())));
 }
 
-string Task::createVessel(Info const& info) {
+string Task::createVessel(Info const& info)
+{
     string frame_id = to_string(info.ais_info.mmsi);
 
     vector<Definition> candidates;
@@ -149,8 +151,8 @@ string Task::createVessel(Info const& info) {
             candidates.push_back(d);
         }
 
-        float length_d = std::min(std::abs(d.min_size - length),
-                                  std::abs(d.max_size - length));
+        float length_d =
+            std::min(std::abs(d.min_size - length), std::abs(d.max_size - length));
         if (length_d < min_length_d) {
             min_length_d = length_d;
             closest_definition = &d;
@@ -165,11 +167,11 @@ string Task::createVessel(Info const& info) {
                    (static_cast<uint64_t>(RAND_MAX) + 1);
 
     auto const& chosen = candidates[chosen_i];
-    std::cout << "MMSI=" << info.ais_info.mmsi
-              << " length=" << length << " "
+    std::cout << "MMSI=" << info.ais_info.mmsi << " length=" << length << " "
               << " is " << chosen.sdf << std::endl;
     chosen.parsed_sdf->GetAttribute("name")->SetFromString(frame_id);
     vizkit3dWorlds[0]->addModel(chosen.parsed_sdf, frame_id, chosen.sdf_version);
+    std::cout << "frame_id: " << frame_id << endl;
     return frame_id;
 }
 
