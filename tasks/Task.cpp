@@ -24,8 +24,7 @@ bool Task::configureHook()
     if (! TaskBase::configureHook()) {
         return false;
     }
-
-    mUTM = gps_base::UTMConverter(_utm_parameters.get());
+    mUTM.reset(new gps_base::UTMConverter(_utm_parameters.get()));
     auto definitions = _model_definitions.get();
     for (auto const& d : definitions) {
         sdf::SDF sdf;
@@ -113,7 +112,7 @@ void Task::updateVesselPosition(ais_base::Position const& position) {
     solution.latitude = position.latitude.getDeg();
     solution.longitude = position.longitude.getDeg();
     solution.altitude = 0;
-    auto nwu = mUTM.convertToNWU(solution);
+    auto nwu = mUTM->convertToNWU(solution);
 
     auto p = nwu.position;
     auto e = base::getEuler(nwu.orientation);

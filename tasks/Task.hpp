@@ -32,7 +32,7 @@ namespace usv_camera_simulation {
         };
         std::vector<Definition> mDefinitions;
 
-        gps_base::UTMConverter mUTM;
+        std::unique_ptr<gps_base::UTMConverter> mUTM;
         void addVesselInformation(ais_base::VesselInformation const& info);
         void updateVesselPosition(ais_base::Position const& position);
         std::string createVessel(Info const& info);
