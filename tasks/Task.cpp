@@ -69,8 +69,8 @@ void Task::addVesselInformation(ais_base::VesselInformation const& vessel_info) 
     info.ais_info = vessel_info;
 
     if (info.ais_position.time.isNull()) {
-        std::cout << "received vessel information for " << mmsi
-                  << " but no position information received yet" << std::endl;
+        LOG_WARN_S << "received vessel information for " << mmsi
+                   << " but no position information received yet" << std::endl;
         return;
     }
 
@@ -87,8 +87,8 @@ void Task::updateVesselPosition(ais_base::Position const& position) {
     if (base::isUnknown(yaw)) {
         yaw = position.course_over_ground;
         if (base::isUnknown(yaw)) {
-            std::cout << "ignoring position for " << mmsi
-                      << " as it has no heading or course information" << std::endl;
+            LOG_ERROR_S << "ignoring position for " << mmsi
+                        << " as it has no heading or course information" << std::endl;
             return;
         }
     }
@@ -96,13 +96,13 @@ void Task::updateVesselPosition(ais_base::Position const& position) {
     info.ais_position.yaw = yaw;
 
     if (info.ais_info.time.isNull()) {
-        std::cout << "received position for " << mmsi
-                  << " but no vessel information received yet" << std::endl;
+        LOG_WARN_S << "received position for " << mmsi
+                   << " but no vessel information received yet" << std::endl;
         return;
     }
 
     if (info.frame_id.empty()) {
-        std::cout << "creating vessel for " << mmsi << std::endl;
+        LOG_DEBUG_S << "creating vessel for " << mmsi << std::endl;
         info.frame_id = createVessel(info);
         if (info.frame_id.empty()) {
             return;
@@ -117,10 +117,10 @@ void Task::updateVesselPosition(ais_base::Position const& position) {
 
     auto p = nwu.position;
     auto e = base::getEuler(nwu.orientation);
-    std::cout << "MMSI=" << info.frame_id << " at\n"
-              << "P: " << p.x() << " " << p.y() << " " << p.z() << "\n"
-              << "E: " << e.x() << " " << e.y() << " " << e.z() << "\n"
-              << "Y: " << info.ais_position.yaw.getRad() << std::endl;
+    LOG_DEBUG_S << "MMSI=" << info.frame_id << " at\n"
+                << "P: " << p.x() << " " << p.y() << " " << p.z() << "\n"
+                << "E: " << e.x() << " " << e.y() << " " << e.z() << "\n"
+                << "Y: " << info.ais_position.yaw.getRad() << std::endl;
 
     vizkit3dWorlds[0]->applyTransformation(
         "world", info.frame_id,
@@ -166,9 +166,9 @@ string Task::createVessel(Info const& info) {
                    (static_cast<uint64_t>(RAND_MAX) + 1);
 
     auto const& chosen = candidates[chosen_i];
-    std::cout << "MMSI=" << info.ais_info.mmsi
-              << " length=" << length << " "
-              << " is " << chosen.sdf << std::endl;
+    LOG_DEBUG_S << "MMSI=" << info.ais_info.mmsi
+                << " length=" << length << " "
+                << " is " << chosen.sdf << std::endl;
     chosen.parsed_sdf->GetAttribute("name")->SetFromString(frame_id);
     vizkit3dWorlds[0]->addModel(chosen.parsed_sdf, frame_id, chosen.sdf_version);
     return frame_id;
